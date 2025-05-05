@@ -14,6 +14,10 @@ builder
     .AddEndpointsApiExplorer()
     .AddControllers();
 
+//Opcion de base de datos en memoria
+//builder.Services.AddDbContext<TodoContext>(opt =>
+//    opt.UseInMemoryDatabase("TodoList"));
+
 builder.Services.AddScoped<TodoCompletionService>();
 
 builder.Services.AddSingleton<IBackgroundJobService, BackgroundJobService>();
