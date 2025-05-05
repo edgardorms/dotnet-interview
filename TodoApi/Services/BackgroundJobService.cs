@@ -15,7 +15,8 @@ namespace TodoApi.Services
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var completionService = scope.ServiceProvider.GetRequiredService<TodoCompletionService>();
+                    var completionService =
+                        scope.ServiceProvider.GetRequiredService<TodoCompletionService>();
                     await completionService.CompleteAllItemsAsync(todoListId);
                 }
             });
@@ -29,7 +30,8 @@ namespace TodoApi.Services
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var completionService = scope.ServiceProvider.GetRequiredService<TodoCompletionService>();
+                    var completionService =
+                        scope.ServiceProvider.GetRequiredService<TodoCompletionService>();
                     await completionService.CompleteAllItemsAsyncSignalR(todoListId);
                 }
             });

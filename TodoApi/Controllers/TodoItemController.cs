@@ -28,9 +28,7 @@ namespace TodoApi.Controllers
                 return NotFound("TodoList not found");
             }
 
-            var items = await _context.TodoItem
-                .Where(item => item.TodoListId == id)
-                .ToListAsync();
+            var items = await _context.TodoItem.Where(item => item.TodoListId == id).ToListAsync();
 
             return Ok(items);
         }
@@ -44,8 +42,8 @@ namespace TodoApi.Controllers
                 return NotFound("TodoList not found");
             }
 
-            var todoItem = await _context.TodoItem
-                .Where(i => i.TodoListId == id && i.Id == itemId)
+            var todoItem = await _context
+                .TodoItem.Where(i => i.TodoListId == id && i.Id == itemId)
                 .FirstOrDefaultAsync();
 
             if (todoItem == null)
@@ -58,7 +56,10 @@ namespace TodoApi.Controllers
 
         // POST: api/todolists/{id}/todos
         [HttpPost]
-        public async Task<ActionResult<TodoItem>> CreateTodoItem(long id, [FromBody] CreateItem payload)
+        public async Task<ActionResult<TodoItem>> CreateTodoItem(
+            long id,
+            [FromBody] CreateItem payload
+        )
         {
             if (!await TodoListExists(id))
             {
@@ -69,26 +70,34 @@ namespace TodoApi.Controllers
             {
                 Description = payload.Description,
                 Completed = false,
-                TodoListId = id
+                TodoListId = id,
             };
 
             _context.TodoItem.Add(todoItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTodoItem), new { id = id, itemId = todoItem.Id }, todoItem);
+            return CreatedAtAction(
+                nameof(GetTodoItem),
+                new { id = id, itemId = todoItem.Id },
+                todoItem
+            );
         }
 
         // PUT: api/todolists/{id}/todos/{itemId}
         [HttpPut("{itemId}")]
-        public async Task<ActionResult> UpdateTodoItem(long id, long itemId, [FromBody] UpdateItem payload)
+        public async Task<ActionResult> UpdateTodoItem(
+            long id,
+            long itemId,
+            [FromBody] UpdateItem payload
+        )
         {
             if (!await TodoListExists(id))
             {
                 return NotFound("TodoList not found");
             }
 
-            var todoItem = await _context.TodoItem
-                .Where(i => i.TodoListId == id && i.Id == itemId)
+            var todoItem = await _context
+                .TodoItem.Where(i => i.TodoListId == id && i.Id == itemId)
                 .FirstOrDefaultAsync();
 
             if (todoItem == null)
@@ -113,8 +122,8 @@ namespace TodoApi.Controllers
                 return NotFound("TodoList not found");
             }
 
-            var todoItem = await _context.TodoItem
-                .Where(i => i.TodoListId == id && i.Id == itemId)
+            var todoItem = await _context
+                .TodoItem.Where(i => i.TodoListId == id && i.Id == itemId)
                 .FirstOrDefaultAsync();
 
             if (todoItem == null)
@@ -150,7 +159,6 @@ namespace TodoApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CompleteAllTodoItemsSignalR(long id)
         {
-
             if (!await TodoListExists(id))
             {
                 return NotFound("TodoList not found");
@@ -175,12 +183,14 @@ namespace TodoApi.Controllers
             var mockItems = new List<TodoItem>();
             for (int i = 1; i <= 100; i++)
             {
-                mockItems.Add(new TodoItem
-                {
-                    Description = $"Mock Item {i}",
-                    Completed = false,
-                    TodoListId = id
-                });
+                mockItems.Add(
+                    new TodoItem
+                    {
+                        Description = $"Mock Item {i}",
+                        Completed = false,
+                        TodoListId = id,
+                    }
+                );
             }
 
             await _context.TodoItem.AddRangeAsync(mockItems);
