@@ -20,9 +20,33 @@ public class TodoItemControllerTests
 
     private void PopulateDatabaseContext(TodoContext context)
     {
-        context.TodoItem.Add(new TodoItem { Id = 1, Description = "Task 1", TodoListId = 1, Completed = false });
-        context.TodoItem.Add(new TodoItem { Id = 2, Description = "Task 2", TodoListId = 1, Completed = true });
-        context.TodoItem.Add(new TodoItem { Id = 3, Description = "Task 3", TodoListId = 2, Completed = false });
+        context.TodoItem.Add(
+            new TodoItem
+            {
+                Id = 1,
+                Description = "Task 1",
+                TodoListId = 1,
+                Completed = false,
+            }
+        );
+        context.TodoItem.Add(
+            new TodoItem
+            {
+                Id = 2,
+                Description = "Task 2",
+                TodoListId = 1,
+                Completed = true,
+            }
+        );
+        context.TodoItem.Add(
+            new TodoItem
+            {
+                Id = 3,
+                Description = "Task 3",
+                TodoListId = 2,
+                Completed = false,
+            }
+        );
         context.TodoList.Add(new TodoList { Id = 1, Name = "Task 1" });
         context.TodoList.Add(new TodoList { Id = 2, Name = "Task 2" });
         context.SaveChanges();
@@ -57,7 +81,10 @@ public class TodoItemControllerTests
 
             Assert.IsType<OkObjectResult>(result.Result);
             Assert.Equal(1, ((result.Result as OkObjectResult).Value as TodoItem).Id);
-            Assert.Equal("Task 1", ((result.Result as OkObjectResult).Value as TodoItem).Description);
+            Assert.Equal(
+                "Task 1",
+                ((result.Result as OkObjectResult).Value as TodoItem).Description
+            );
         }
     }
 
@@ -108,7 +135,6 @@ public class TodoItemControllerTests
 
             Assert.IsType<OkObjectResult>(result);
             Assert.True(((result as OkObjectResult).Value as TodoItem).Completed);
-
         }
     }
 
@@ -121,12 +147,14 @@ public class TodoItemControllerTests
 
             var controller = new TodoItemController(context, _backgroundJobService);
 
-            var result = await controller.CreateTodoItem(2, new Dtos.CreateItem { Description = "Task 4", Completed = false });
+            var result = await controller.CreateTodoItem(
+                2,
+                new Dtos.CreateItem { Description = "Task 4", Completed = false }
+            );
             var listTodo = await controller.GetTodoItems(2);
 
             Assert.IsType<CreatedAtActionResult>(result.Result);
             Assert.Equal(2, ((listTodo.Result as OkObjectResult).Value as IList<TodoItem>).Count);
-
         }
     }
 
