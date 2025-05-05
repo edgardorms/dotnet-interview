@@ -1,3 +1,5 @@
+Put a Connection String in "TodoContext" or uncomment the memory database in Program.cs to run the project.
+
 # dotnet-interview / TodoApi
 
 [![Open in Coder](https://dev.crunchloop.io/open-in-coder.svg)](https://dev.crunchloop.io/templates/fly-containers/workspace?param.Git%20Repository=git@github.com:crunchloop/dotnet-interview.git)
