@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Dtos;
 using TodoApi.Models;
+using TodoApi.Services;
 
 namespace TodoApi.Controllers
 {
@@ -10,10 +11,12 @@ namespace TodoApi.Controllers
     public class TodoItemController : ControllerBase
     {
         private readonly TodoContext _context;
+        private readonly IBackgroundJobService _backgroundJobService;
 
-        public TodoItemController(TodoContext context)
+        public TodoItemController(TodoContext context, IBackgroundJobService backgroundJobService)
         {
             _context = context;
+            _backgroundJobService = backgroundJobService;
         }
 
         // GET: api/todolists/{id}/todos
@@ -123,6 +126,67 @@ namespace TodoApi.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // POST: api/todolists/{id}/todos/complete-all
+        [HttpPost("complete-all")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CompleteAllTodoItems(long id)
+        {
+            if (!await TodoListExists(id))
+            {
+                return NotFound("TodoList not found");
+            }
+
+            await _backgroundJobService.EnqueueCompleteAllItemsJob(id);
+
+            return Accepted();
+        }
+
+        // POST: api/todolists/{id}/todos/complete-all-signalr
+        [HttpPost("complete-all-signalr")] // Nueva ruta
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CompleteAllTodoItemsSignalR(long id)
+        {
+
+            if (!await TodoListExists(id))
+            {
+                return NotFound("TodoList not found");
+            }
+
+            await _backgroundJobService.EnqueueCompleteAllItemsJobSignalR(id);
+
+            return Accepted();
+        }
+
+        // POST: api/todolists/{id}/todos/mockupData
+        [HttpPost("mockupData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CreateMockupData(long id)
+        {
+            if (!await TodoListExists(id))
+            {
+                return NotFound("TodoList not found");
+            }
+
+            var mockItems = new List<TodoItem>();
+            for (int i = 1; i <= 100; i++)
+            {
+                mockItems.Add(new TodoItem
+                {
+                    Description = $"Mock Item {i}",
+                    Completed = false,
+                    TodoListId = id
+                });
+            }
+
+            await _context.TodoItem.AddRangeAsync(mockItems);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = $"Successfully added 100 mock items to list {id}" });
         }
 
         private async Task<bool> TodoListExists(long id)

@@ -2,12 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Controllers;
 using TodoApi.Models;
+using TodoApi.Services;
 
 namespace TodoApi.Tests;
 
 #nullable disable
 public class TodoItemControllerTests
 {
+    private readonly IBackgroundJobService _backgroundJobService; // Inject the service
+
     private DbContextOptions<TodoContext> DatabaseContextOptions()
     {
         return new DbContextOptionsBuilder<TodoContext>()
@@ -32,7 +35,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.GetTodoItems(1);
 
@@ -48,7 +51,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.GetTodoItem(1, 1);
 
@@ -65,7 +68,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.GetTodoItem(1, 999);
 
@@ -80,7 +83,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.GetTodoItem(999, 1);
 
@@ -95,7 +98,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.UpdateTodoItem(
                 1,
@@ -116,7 +119,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.CreateTodoItem(2, new Dtos.CreateItem { Description = "Task 4", Completed = false });
             var listTodo = await controller.GetTodoItems(2);
@@ -134,7 +137,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.DeleteTodoItem(1, 1);
 
@@ -150,7 +153,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.DeleteTodoItem(1, 999);
 
@@ -165,7 +168,7 @@ public class TodoItemControllerTests
         {
             PopulateDatabaseContext(context);
 
-            var controller = new TodoItemController(context);
+            var controller = new TodoItemController(context, _backgroundJobService);
 
             var result = await controller.DeleteTodoItem(999, 1);
 
