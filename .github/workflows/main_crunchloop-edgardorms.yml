@@ -25,6 +25,12 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
+        
+      - name: Build with dotnet
+        run: dotnet build ./TodoApi/TodoApi.csproj --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish ./TodoApi/TodoApi.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
